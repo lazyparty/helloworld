@@ -1,53 +1,57 @@
-package cn.daryu.shop.util;
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3) 
 
-import java.util.Locale;
+package net.shopxx.util;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.LocaleResolver;
 
-@Component("springUtils")
-@Lazy(false)
 public final class SpringUtils
-  implements DisposableBean, ApplicationContextAware
+    implements DisposableBean, ApplicationContextAware
 {
-  private static ApplicationContext applicationContext;
 
-  public void setApplicationContext(ApplicationContext applicationContext)
-  {
-	  this.applicationContext = applicationContext;
-  }
+    private SpringUtils()
+    {
+    }
 
-  public void destroy()
-  {
-	  applicationContext = null;
-  }
+    public void setApplicationContext(ApplicationContext applicationContext)
+    {
+        IIIllIlI = applicationContext;
+    }
 
-  public static ApplicationContext getApplicationContext()
-  {
-    return applicationContext;
-  }
+    public void destroy()
+    {
+        IIIllIlI = null;
+    }
 
-  public static Object getBean(String name)
-  {
-    Assert.hasText(name);
-    return applicationContext.getBean(name);
-  }
+    public static ApplicationContext getApplicationContext()
+    {
+        return IIIllIlI;
+    }
 
-  public static <T> T getBean(String name, Class<T> type)
-  {
-    Assert.hasText(name);
-    Assert.notNull(type);
-    return applicationContext.getBean(name, type);
-  }
+    public static Object getBean(String name)
+    {
+        Assert.hasText(name);
+        return IIIllIlI.getBean(name);
+    }
 
-  public static String getMessage(String code, Object[] args)
-  {
-    LocaleResolver localLocaleResolver = (LocaleResolver)getBean("localeResolver", LocaleResolver.class);
-    Locale localLocale = localLocaleResolver.resolveLocale(null);
-    return applicationContext.getMessage(code, args, localLocale);
-  }
+    public static Object getBean(String name, Class type)
+    {
+        Assert.hasText(name);
+        Assert.notNull(type);
+        return IIIllIlI.getBean(name, type);
+    }
+
+    public static transient String getMessage(String code, Object args[])
+    {
+        LocaleResolver localeresolver = (LocaleResolver)getBean("localeResolver", org/springframework/web/servlet/LocaleResolver);
+        java.util.Locale locale = localeresolver.resolveLocale(null);
+        return IIIllIlI.getMessage(code, args, locale);
+    }
+
+    private static ApplicationContext IIIllIlI;
 }

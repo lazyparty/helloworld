@@ -1,184 +1,183 @@
-package cn.daryu.shop.util;
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3) 
+
+package net.shopxx.util;
 
 import freemarker.core.Environment;
-import freemarker.template.Configuration;
-import freemarker.template.ObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
+import freemarker.template.*;
 import freemarker.template.utility.DeepUnwrap;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import cn.daryu.shop.CommonAttributes;
-import cn.daryu.shop.EnumConverter;
-
+import java.io.*;
+import java.util.*;
+import net.shopxx.CommonAttributes;
 import org.apache.commons.beanutils.ConvertUtilsBean;
-import org.apache.commons.beanutils.Converter;
-import org.apache.commons.beanutils.converters.ArrayConverter;
 import org.apache.commons.beanutils.converters.DateConverter;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-public final class FreemarkerUtils {
+// Referenced classes of package net.shopxx.util:
+//            SpringUtils
 
-	private static final ConvertUtilsBean convertUtilsBean = new FreemarkerConvertUtilsBean();
+public final class FreemarkerUtils
+{
 
-	static {
-		DateConverter localDateConverter = new DateConverter();
-		localDateConverter.setPatterns(CommonAttributes.DATE_PATTERNS);
-		convertUtilsBean.register(localDateConverter, Date.class);
-	}
+    private FreemarkerUtils()
+    {
+    }
 
-	public static String process(String template, Map<String, ?> model) {
-		Configuration localConfiguration = null;
-		ApplicationContext localApplicationContext = SpringUtils
-				.getApplicationContext();
-		if (localApplicationContext != null) {
-			FreeMarkerConfigurer localFreeMarkerConfigurer = (FreeMarkerConfigurer) SpringUtils
-					.getBean("freeMarkerConfigurer", FreeMarkerConfigurer.class);
-			if (localFreeMarkerConfigurer != null)
-				localConfiguration = localFreeMarkerConfigurer
-						.getConfiguration();
-		}
-		return process(template, model, localConfiguration);
-	}
+    public static String process(String template, Map model)
+    {
+        Configuration configuration = null;
+        org.springframework.context.ApplicationContext applicationcontext = SpringUtils.getApplicationContext();
+        if(applicationcontext != null)
+        {
+            FreeMarkerConfigurer freemarkerconfigurer = (FreeMarkerConfigurer)SpringUtils.getBean("freeMarkerConfigurer", org/springframework/web/servlet/view/freemarker/FreeMarkerConfigurer);
+            if(freemarkerconfigurer != null)
+                configuration = freemarkerconfigurer.getConfiguration();
+        }
+        return process(template, model, configuration);
+    }
 
-	public static String process(String template, Map<String, ?> model,
-			Configuration configuration) {
-		if (template == null)
-			return null;
-		if (configuration == null)
-			configuration = new Configuration();
-		StringWriter localStringWriter = new StringWriter();
-		try {
-			new Template("template", new StringReader(template), configuration)
-					.process(model, localStringWriter);
-		} catch (TemplateException localTemplateException) {
-			localTemplateException.printStackTrace();
-		} catch (IOException localIOException) {
-			localIOException.printStackTrace();
-		}
-		return localStringWriter.toString();
-	}
+    public static String process(String template, Map model, Configuration configuration)
+    {
+        if(template == null)
+            return null;
+        if(configuration == null)
+            configuration = new Configuration();
+        StringWriter stringwriter = new StringWriter();
+        try
+        {
+            (new Template("template", new StringReader(template), configuration)).process(model, stringwriter);
+        }
+        catch(TemplateException templateexception)
+        {
+            templateexception.printStackTrace();
+        }
+        catch(IOException ioexception)
+        {
+            ioexception.printStackTrace();
+        }
+        return stringwriter.toString();
+    }
 
-	public static <T> T getParameter(String name, Class<T> type,
-			Map<String, TemplateModel> params) throws TemplateModelException {
-		Assert.hasText(name);
-		Assert.notNull(type);
-		Assert.notNull(params);
-		TemplateModel localTemplateModel = (TemplateModel) params.get(name);
-		if (localTemplateModel == null)
-			return null;
-		Object localObject = DeepUnwrap.unwrap(localTemplateModel);
-		return (T) convertUtilsBean.convert(localObject, type);
-	}
+    public static Object getParameter(String name, Class type, Map params)
+    {
+        Assert.hasText(name);
+        Assert.notNull(type);
+        Assert.notNull(params);
+        TemplateModel templatemodel = (TemplateModel)params.get(name);
+        if(templatemodel == null)
+        {
+            return null;
+        } else
+        {
+            Object obj = DeepUnwrap.unwrap(templatemodel);
+            return IIIllIlI.convert(obj, type);
+        }
+    }
 
-	public static TemplateModel getVariable(String name, Environment env)
-			throws TemplateModelException {
-		Assert.hasText(name);
-		Assert.notNull(env);
-		return env.getVariable(name);
-	}
+    public static TemplateModel getVariable(String name, Environment env)
+    {
+        Assert.hasText(name);
+        Assert.notNull(env);
+        return env.getVariable(name);
+    }
 
-	public static void setVariable(String name, Object value, Environment env)
-			throws TemplateModelException {
-		Assert.hasText(name);
-		Assert.notNull(env);
-		if (value instanceof TemplateModel)
-			env.setVariable(name, (TemplateModel) value);
-		else
-			env.setVariable(name, ObjectWrapper.BEANS_WRAPPER.wrap(value));
-	}
+    public static void setVariable(String name, Object value, Environment env)
+    {
+        Assert.hasText(name);
+        Assert.notNull(env);
+        if(value instanceof TemplateModel)
+            env.setVariable(name, (TemplateModel)value);
+        else
+            env.setVariable(name, ObjectWrapper.BEANS_WRAPPER.wrap(value));
+    }
 
-	public static void setVariables(Map<String, Object> variables,
-			Environment env) throws TemplateModelException {
-		Assert.notNull(variables);
-		Assert.notNull(env);
-		Iterator localIterator = variables.entrySet().iterator();
-		while (localIterator.hasNext()) {
-			Map.Entry localEntry = (Map.Entry) localIterator.next();
-			String str = (String) localEntry.getKey();
-			Object localObject = localEntry.getValue();
-			if (localObject instanceof TemplateModel)
-				env.setVariable(str, (TemplateModel) localObject);
-			else
-				env.setVariable(str,
-						ObjectWrapper.BEANS_WRAPPER.wrap(localObject));
-		}
-	}
+    public static void setVariables(Map variables, Environment env)
+    {
+        Assert.notNull(variables);
+        Assert.notNull(env);
+        for(Iterator iterator = variables.entrySet().iterator(); iterator.hasNext();)
+        {
+            java.util.Map.Entry entry = (java.util.Map.Entry)iterator.next();
+            String s = (String)entry.getKey();
+            Object obj = entry.getValue();
+            if(obj instanceof TemplateModel)
+                env.setVariable(s, (TemplateModel)obj);
+            else
+                env.setVariable(s, ObjectWrapper.BEANS_WRAPPER.wrap(obj));
+        }
 
-	// Bean的转化
-	public static class FreemarkerConvertUtilsBean extends ConvertUtilsBean {
+    }
 
-		public String convert(Object value) {
+    private static final ConvertUtilsBean IIIllIlI;
 
-			if (value != null) {
+    static 
+    {
+        IIIllIlI = new _cls1();
+        DateConverter dateconverter = new DateConverter();
+        dateconverter.setPatterns(CommonAttributes.DATE_PATTERNS);
+        IIIllIlI.register(dateconverter, java/util/Date);
+    }
 
-				Class localClass = value.getClass();
+    private class _cls1 extends ConvertUtilsBean
+    {
 
-				if ((localClass.isEnum()) && (super.lookup(localClass) == null)) {
-					super.register(new EnumConverter(localClass), localClass);
+        public String convert(Object value)
+        {
+            if(value != null)
+            {
+                Class class1 = value.getClass();
+                if(class1.isEnum() && super.lookup(class1) == null)
+                    super.register(new EnumConverter(class1), class1);
+                else
+                if(class1.isArray() && class1.getComponentType().isEnum())
+                {
+                    if(super.lookup(class1) == null)
+                    {
+                        ArrayConverter arrayconverter = new ArrayConverter(class1, new EnumConverter(class1.getComponentType()), 0);
+                        arrayconverter.setOnlyFirstToString(false);
+                        super.register(arrayconverter, class1);
+                    }
+                    Converter converter = super.lookup(class1);
+                    return (String)converter.convert(java/lang/String, value);
+                }
+            }
+            return super.convert(value);
+        }
 
-				} else if ((localClass.isArray())
+        public Object convert(String value, Class clazz)
+        {
+            if(clazz.isEnum() && super.lookup(clazz) == null)
+                super.register(new EnumConverter(clazz), clazz);
+            return super.convert(value, clazz);
+        }
 
-				&& (localClass.getComponentType().isEnum())) {
-					Object localObject = null;
-					if (super.lookup(localClass) == null) {
+        public Object convert(String values[], Class clazz)
+        {
+            if(clazz.isArray() && clazz.getComponentType().isEnum() && super.lookup(clazz.getComponentType()) == null)
+                super.register(new EnumConverter(clazz.getComponentType()), clazz.getComponentType());
+            return super.convert(values, clazz);
+        }
 
-						localObject = new ArrayConverter(
-								localClass,
-								new EnumConverter(localClass.getComponentType()),
-								0);
-						((ArrayConverter) localObject)
-								.setOnlyFirstToString(false);
-						super.register((Converter) localObject, localClass);
-					}
-					localObject = super.lookup(localClass);
-					return ((String) ((Converter) localObject).convert(
-							String.class, value));
-				}
-			}
-			return ((String) super.convert(value));
-		}
+        public Object convert(Object value, Class targetType)
+        {
+            if(super.lookup(targetType) == null)
+                if(targetType.isEnum())
+                    super.register(new EnumConverter(targetType), targetType);
+                else
+                if(targetType.isArray() && targetType.getComponentType().isEnum())
+                {
+                    ArrayConverter arrayconverter = new ArrayConverter(targetType, new EnumConverter(targetType.getComponentType()), 0);
+                    arrayconverter.setOnlyFirstToString(false);
+                    super.register(arrayconverter, targetType);
+                }
+            return super.convert(value, targetType);
+        }
 
-		public Object convert(String value, Class clazz) {
-			if ((clazz.isEnum()) && (super.lookup(clazz) == null))
-				super.register(new EnumConverter(clazz), clazz);
-			return super.convert(value, clazz);
-		}
-
-		public Object convert(String[] values, Class clazz) {
-			if ((clazz.isArray()) && (clazz.getComponentType().isEnum())
-					&& (super.lookup(clazz.getComponentType()) == null))
-				super.register(new EnumConverter(clazz.getComponentType()),
-						clazz.getComponentType());
-			return super.convert(values, clazz);
-		}
-
-		public Object convert(Object value, Class targetType) {
-			if (super.lookup(targetType) == null)
-				if (targetType.isEnum()) {
-					super.register(new EnumConverter(targetType), targetType);
-				} else if ((targetType.isArray())
-						&& (targetType.getComponentType().isEnum())) {
-					ArrayConverter localArrayConverter = new ArrayConverter(
-							targetType, new EnumConverter(
-									targetType.getComponentType()), 0);
-					localArrayConverter.setOnlyFirstToString(false);
-					super.register(localArrayConverter, targetType);
-				}
-			return super.convert(value, targetType);
-		}
-	}
+        _cls1()
+        {
+        }
+    }
 
 }

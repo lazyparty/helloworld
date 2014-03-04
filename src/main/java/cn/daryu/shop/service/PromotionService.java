@@ -1,0 +1,19 @@
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3) 
+
+package net.shopxx.service;
+
+import java.util.List;
+
+// Referenced classes of package net.shopxx.service:
+//            BaseService
+
+public interface PromotionService
+    extends BaseService
+{
+
+    public abstract List findList(Boolean boolean1, Boolean boolean2, Integer integer, List list, List list1);
+
+    public abstract List findList(Boolean boolean1, Boolean boolean2, Integer integer, List list, List list1, String s);
+}

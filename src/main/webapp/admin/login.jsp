@@ -1,17 +1,19 @@
-<%@page language="java" contentType="text/html; charset=utf-8" pageEncoding="UTF-8"%>
+<%@page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="UTF-8"%>
 <%@page import="org.springframework.context.ApplicationContext"%>
-<%@page import="net.shopxx.Setting"%>
-<%@page import="net.shopxx.util.SettingUtils"%>
-<%@page import="net.shopxx.util.SpringUtils"%>
-<%@page import="org.apache.shiro.web.filter.authc.FormAuthenticationFilter"%>
+<%@page import="cn.daryu.shop.Setting"%>
+<%@page import="cn.daryu.shop.util.SettingUtils"%>
+<%@page import="cn.daryu.shop.util.SpringUtils"%>
+<%@page
+	import="org.apache.shiro.web.filter.authc.FormAuthenticationFilter"%>
 <%@page import="java.util.UUID"%>
-<%@page import="net.shopxx.Setting.AccountLockType"%>
+<%@page import="cn.daryu.shop.Setting.AccountLockType"%>
 <%@page import="org.apache.commons.lang.ArrayUtils"%>
-<%@page import="net.shopxx.Setting.CaptchaType"%>
+<%@page import="cn.daryu.shop.Setting.CaptchaType"%>
 <%@page import="java.security.interfaces.RSAPublicKey"%>
 <%@page import="org.apache.commons.codec.binary.Base64"%>
-<%@page import="net.shopxx.service.RSAService"%>
-<%@taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+<%@page import="cn.daryu.shop.service.RSAService"%>
+<%@taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
 <%
 String base = request.getContextPath();
 String captchaId = UUID.randomUUID().toString();
@@ -20,7 +22,7 @@ Setting setting = SettingUtils.get();
 if (applicationContext != null) {
 %>
 <shiro:authenticated>
-<%
+	<%
 response.sendRedirect(base + "/admin/common/main.jhtml");
 %>
 </shiro:authenticated>
@@ -60,21 +62,29 @@ if (applicationContext != null) {
 		}
 	}
 %>
-<title><%=SpringUtils.getMessage("admin.login.title")%> - Powered By SHOP++</title>
+<title><%=SpringUtils.getMessage("admin.login.title")%> -
+	Powered By SHOP++</title>
 <meta http-equiv="expires" content="0" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Cache-Control" content="no-cache" />
 <meta name="author" content="SHOP++ Team" />
 <meta name="copyright" content="SHOP++" />
-<link href="<%=base%>/resources/admin/css/common.css" rel="stylesheet" type="text/css" />
-<link href="<%=base%>/resources/admin/css/login.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="<%=base%>/resources/admin/js/jquery.js"></script>
-<script type="text/javascript" src="<%=base%>/resources/admin/js/jsbn.js"></script>
-<script type="text/javascript" src="<%=base%>/resources/admin/js/prng4.js"></script>
+<link href="<%=base%>/resources/admin/css/common.css" rel="stylesheet"
+	type="text/css" />
+<link href="<%=base%>/resources/admin/css/login.css" rel="stylesheet"
+	type="text/css" />
+<script type="text/javascript"
+	src="<%=base%>/resources/admin/js/jquery.js"></script>
+<script type="text/javascript"
+	src="<%=base%>/resources/admin/js/jsbn.js"></script>
+<script type="text/javascript"
+	src="<%=base%>/resources/admin/js/prng4.js"></script>
 <script type="text/javascript" src="<%=base%>/resources/admin/js/rng.js"></script>
 <script type="text/javascript" src="<%=base%>/resources/admin/js/rsa.js"></script>
-<script type="text/javascript" src="<%=base%>/resources/admin/js/base64.js"></script>
-<script type="text/javascript" src="<%=base%>/resources/admin/js/common.js"></script>
+<script type="text/javascript"
+	src="<%=base%>/resources/admin/js/base64.js"></script>
+<script type="text/javascript"
+	src="<%=base%>/resources/admin/js/common.js"></script>
 <script type="text/javascript">
 	$().ready( function() {
 		
@@ -140,96 +150,84 @@ if (applicationContext != null) {
 <meta http-equiv="Cache-Control" content="no-cache" />
 <meta name="author" content="SHOP++ Team" />
 <meta name="copyright" content="SHOP++" />
-<link href="<%=base%>/resources/admin/css/common.css" rel="stylesheet" type="text/css" />
-<link href="<%=base%>/resources/admin/css/login.css" rel="stylesheet" type="text/css" />
+<link href="<%=base%>/resources/admin/css/common.css" rel="stylesheet"
+	type="text/css" />
+<link href="<%=base%>/resources/admin/css/login.css" rel="stylesheet"
+	type="text/css" />
 <%}%>
 </head>
 <body>
 	<%if (applicationContext != null) {%>
-		<div class="login">
-			<form id="loginForm" action="login.jsp" method="post">
-				<input type="hidden" id="enPassword" name="enPassword" />
+	<div class="login">
+		<form id="loginForm" action="login.jsp" method="post">
+			<input type="hidden" id="enPassword" name="enPassword" />
+			<%if (ArrayUtils.contains(setting.getCaptchaTypes(), CaptchaType.adminLogin)) {%>
+			<input type="hidden" name="captchaId" value="<%=captchaId%>" />
+			<%}%>
+			<table>
+				<tr>
+					<td width="190" rowspan="2" align="center" valign="bottom"><img
+						src="<%=base%>/resources/admin/images/login_logo.gif" alt="SHOP++" />
+					</td>
+					<th><%=SpringUtils.getMessage("admin.login.username")%>:</th>
+					<td><input type="text" id="username" name="username"
+						class="text" maxlength="20" /></td>
+				</tr>
+				<tr>
+					<th><%=SpringUtils.getMessage("admin.login.password")%>:</th>
+					<td><input type="password" id="password" class="text"
+						maxlength="20" autocomplete="off" /></td>
+				</tr>
 				<%if (ArrayUtils.contains(setting.getCaptchaTypes(), CaptchaType.adminLogin)) {%>
-					<input type="hidden" name="captchaId" value="<%=captchaId%>" />
+				<tr>
+					<td>&nbsp;</td>
+					<th><%=SpringUtils.getMessage("admin.captcha.name")%>:</th>
+					<td><input type="text" id="captcha" name="captcha"
+						class="text captcha" maxlength="4" autocomplete="off" /><img
+						id="captchaImage" class="captchaImage"
+						src="<%=base%>/admin/common/captcha.jhtml?captchaId=<%=captchaId%>"
+						title="<%=SpringUtils.getMessage("admin.captcha.imageTitle")%>" />
+					</td>
+				</tr>
 				<%}%>
-				<table>
-					<tr>
-						<td width="190" rowspan="2" align="center" valign="bottom">
-							<img src="<%=base%>/resources/admin/images/login_logo.gif" alt="SHOP++" />
-						</td>
-						<th>
-							<%=SpringUtils.getMessage("admin.login.username")%>:
-						</th>
-						<td>
-							<input type="text" id="username" name="username" class="text" maxlength="20" />
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<%=SpringUtils.getMessage("admin.login.password")%>:
-						</th>
-						<td>
-							<input type="password" id="password" class="text" maxlength="20" autocomplete="off" />
-						</td>
-					</tr>
-					<%if (ArrayUtils.contains(setting.getCaptchaTypes(), CaptchaType.adminLogin)) {%>
-						<tr>
-							<td>
-								&nbsp;
-							</td>
-							<th>
-								<%=SpringUtils.getMessage("admin.captcha.name")%>:
-							</th>
-							<td>
-								<input type="text" id="captcha" name="captcha" class="text captcha" maxlength="4" autocomplete="off" /><img id="captchaImage" class="captchaImage" src="<%=base%>/admin/common/captcha.jhtml?captchaId=<%=captchaId%>" title="<%=SpringUtils.getMessage("admin.captcha.imageTitle")%>" />
-							</td>
-						</tr>
-					<%}%>
-					<tr>
-						<td>
-							&nbsp;
-						</td>
-						<th>
-							&nbsp;
-						</th>
-						<td>
-							<label>
-								<input type="checkbox" id="isRememberUsername" value="true" />
-								<%=SpringUtils.getMessage("admin.login.rememberUsername")%>:
-							</label>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							&nbsp;
-						</td>
-						<th>
-							&nbsp;
-						</th>
-						<td>
-							<input type="button" class="homeButton" value="" onclick="location.href='<%=base%>/'" /><input type="submit" class="loginButton" value="<%=SpringUtils.getMessage("admin.login.login")%>" />
-						</td>
-					</tr>
-				</table>
-				<div class="powered">COPYRIGHT © 2005-2013 SHOPXX.NET ALL RIGHTS RESERVED.</div>
-				<div class="link">
-					<a href="<%=base%>/"><%=SpringUtils.getMessage("admin.login.home")%></a> |
-					<a href="http://www.shopxx.net"><%=SpringUtils.getMessage("admin.login.official")%></a> |
-					<a href="http://bbs.shopxx.net"><%=SpringUtils.getMessage("admin.login.bbs")%></a> |
-					<a href="http://www.shopxx.net/about.html"><%=SpringUtils.getMessage("admin.login.about")%></a> |
-					<a href="http://www.shopxx.net/contact.html"><%=SpringUtils.getMessage("admin.login.contact")%></a> |
-					<a href="http://www.shopxx.net/license.html"><%=SpringUtils.getMessage("admin.login.license")%></a>
-				</div>
-			</form>
-		</div>
+				<tr>
+					<td>&nbsp;</td>
+					<th>&nbsp;</th>
+					<td><label> <input type="checkbox"
+							id="isRememberUsername" value="true" /> <%=SpringUtils.getMessage("admin.login.rememberUsername")%>:
+					</label></td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<th>&nbsp;</th>
+					<td><input type="button" class="homeButton" value=""
+						onclick="location.href='<%=base%>/'" /><input type="submit"
+						class="loginButton"
+						value="<%=SpringUtils.getMessage("admin.login.login")%>" /></td>
+				</tr>
+			</table>
+			<div class="powered">COPYRIGHT © 2005-2013 SHOPXX.NET ALL
+				RIGHTS RESERVED.</div>
+			<div class="link">
+				<a href="<%=base%>/"><%=SpringUtils.getMessage("admin.login.home")%></a>
+				| <a href="http://www.shopxx.net"><%=SpringUtils.getMessage("admin.login.official")%></a>
+				| <a href="http://bbs.shopxx.net"><%=SpringUtils.getMessage("admin.login.bbs")%></a>
+				| <a href="http://www.shopxx.net/about.html"><%=SpringUtils.getMessage("admin.login.about")%></a>
+				| <a href="http://www.shopxx.net/contact.html"><%=SpringUtils.getMessage("admin.login.contact")%></a>
+				| <a href="http://www.shopxx.net/license.html"><%=SpringUtils.getMessage("admin.login.license")%></a>
+			</div>
+		</form>
+	</div>
 	<%} else {%>
-		<fieldset>
-			<legend>系统出现异常</legend>
-			<p>请检查SHOP++程序是否已正确安装 [<a href="<%=base%>/install/">点击此处进行安装</a>]</p>
-			<p>
-				<strong>提示: SHOP++安装完成后必须重新启动WEB服务器</strong>
-			</p>
-		</fieldset>
+	<fieldset>
+		<legend>系统出现异常</legend>
+		<p>
+			请检查SHOP++程序是否已正确安装 [<a href="<%=base%>/install/">点击此处进行安装</a>]
+		</p>
+		<p>
+			<strong>提示: SHOP++安装完成后必须重新启动WEB服务器</strong>
+		</p>
+	</fieldset>
 	<%}%>
 </body>
 </html>

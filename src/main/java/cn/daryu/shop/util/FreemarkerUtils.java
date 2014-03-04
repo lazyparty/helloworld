@@ -6,6 +6,7 @@ import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
 import freemarker.template.utility.DeepUnwrap;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 public final class FreemarkerUtils {
-	
+
 	private static final ConvertUtilsBean convertUtilsBean = new FreemarkerConvertUtilsBean();
 
 	static {
@@ -71,7 +72,7 @@ public final class FreemarkerUtils {
 	}
 
 	public static <T> T getParameter(String name, Class<T> type,
-			Map<String, TemplateModel> params) {
+			Map<String, TemplateModel> params) throws TemplateModelException {
 		Assert.hasText(name);
 		Assert.notNull(type);
 		Assert.notNull(params);
@@ -79,16 +80,18 @@ public final class FreemarkerUtils {
 		if (localTemplateModel == null)
 			return null;
 		Object localObject = DeepUnwrap.unwrap(localTemplateModel);
-		return convertUtilsBean.convert(localObject, type);
+		return (T) convertUtilsBean.convert(localObject, type);
 	}
 
-	public static TemplateModel getVariable(String name, Environment env) {
+	public static TemplateModel getVariable(String name, Environment env)
+			throws TemplateModelException {
 		Assert.hasText(name);
 		Assert.notNull(env);
 		return env.getVariable(name);
 	}
 
-	public static void setVariable(String name, Object value, Environment env) {
+	public static void setVariable(String name, Object value, Environment env)
+			throws TemplateModelException {
 		Assert.hasText(name);
 		Assert.notNull(env);
 		if (value instanceof TemplateModel)
@@ -98,7 +101,7 @@ public final class FreemarkerUtils {
 	}
 
 	public static void setVariables(Map<String, Object> variables,
-			Environment env) {
+			Environment env) throws TemplateModelException {
 		Assert.notNull(variables);
 		Assert.notNull(env);
 		Iterator localIterator = variables.entrySet().iterator();
@@ -114,18 +117,25 @@ public final class FreemarkerUtils {
 		}
 	}
 
-	//BeanµÄ×ª»¯Àà
+	// Beançš„è½¬åŒ–
 	public static class FreemarkerConvertUtilsBean extends ConvertUtilsBean {
-		
+
 		public String convert(Object value) {
+
 			if (value != null) {
+
 				Class localClass = value.getClass();
+
 				if ((localClass.isEnum()) && (super.lookup(localClass) == null)) {
 					super.register(new EnumConverter(localClass), localClass);
+
 				} else if ((localClass.isArray())
-						&& (localClass.getComponentType().isEnum())) {
+
+				&& (localClass.getComponentType().isEnum())) {
+					Object localObject = null;
 					if (super.lookup(localClass) == null) {
-						ArrayConverter localObject = new ArrayConverter(
+
+						localObject = new ArrayConverter(
 								localClass,
 								new EnumConverter(localClass.getComponentType()),
 								0);
@@ -133,7 +143,7 @@ public final class FreemarkerUtils {
 								.setOnlyFirstToString(false);
 						super.register((Converter) localObject, localClass);
 					}
-					Object localObject = super.lookup(localClass);
+					localObject = super.lookup(localClass);
 					return ((String) ((Converter) localObject).convert(
 							String.class, value));
 				}

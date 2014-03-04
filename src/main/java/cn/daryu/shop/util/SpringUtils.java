@@ -18,7 +18,7 @@ public final class SpringUtils
 
   public void setApplicationContext(ApplicationContext applicationContext)
   {
-	  applicationContext = applicationContext;
+	  this.applicationContext = applicationContext;
   }
 
   public void destroy()

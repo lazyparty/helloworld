@@ -18,7 +18,7 @@
 <%@page import="org.dom4j.io.XMLWriter"%>
 <%@page import="org.dom4j.io.SAXReader"%>
 <%@page import="java.sql.*"%>
-<%@page import="net.shopxx.CommonAttributes"%>
+<%@page import="cn.daryu.shop.CommonAttributes"%>
 <%@include file="common.jsp"%>
 <%
 	Boolean isAgreeAgreement = (Boolean) session.getAttribute("isAgreeAgreement");

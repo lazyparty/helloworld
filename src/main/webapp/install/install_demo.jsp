@@ -1,4 +1,4 @@
-<%@page import="net.shopxx.util.FreemarkerUtils"%>
+<%@page import="cn.daryu.shop.util.FreemarkerUtils"%>
 <%@page language="java" contentType="text/html; charset=utf-8" pageEncoding="UTF-8"%>
 <%@page import="java.io.*"%>
 <%@page import="java.sql.*"%>

@@ -2,7 +2,7 @@
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 
-package net.shopxx;
+package cn.daryu.shop;
 
 import java.util.*;
 import net.shopxx.entity.Admin;

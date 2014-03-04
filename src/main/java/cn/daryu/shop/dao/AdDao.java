@@ -2,7 +2,7 @@
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 
-package net.shopxx.dao;
+package cn.daryu.shop.dao;
 
 
 // Referenced classes of package net.shopxx.dao:
